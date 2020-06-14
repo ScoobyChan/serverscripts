@@ -125,18 +125,6 @@ groupadd "$GROUPNAME_USERS"
 GROUPNAME_ADMINS=smbadmins
 groupadd "$GROUPNAME_ADMINS"
 
-# create guest user
-printf "%b\n" "${Green}create guest user (e.g visitor) [read only access]:${Color_Off}"
-read -rp "New guest user: " GUEST_USER
-sed -i "s/MYGUESTUSER/$GUEST_USER/g" "$PATH_CONFIG"
-mkdir "$SAVEDIR/everyone"
-useradd -d "$SAVEDIR/everyone" -M -s /usr/sbin/nologin -G "$GROUPNAME" "$GUEST_USER"
-chown "$GUEST_USER":"$GROUPNAME" "$SAVEDIR/everyone"
-chmod 2770 "$SAVEDIR/everyone"
-smbpasswd -a "$GUEST_USER"
-smbpasswd -e "$GUEST_USER"
-printf "\n"
-
 # create normal user, add user to config, add user to groups, set inherit permissions, create samba password
 printf "%b\n" "${Green}create normal user (e.g bruce) [read/write access]:${Color_Off}"
 read -rp "New normal user: " NORMAL_USER
@@ -147,18 +135,6 @@ chown "$NORMAL_USER":"$GROUPNAME" "$SAVEDIR/$NORMAL_USER"
 chmod 2770 "$SAVEDIR/$NORMAL_USER"
 smbpasswd -a "$NORMAL_USER"
 smbpasswd -e "$NORMAL_USER"
-printf "\n"
-
-# create admin user
-printf "%b\n" "${Green}create administrator user (e.g godmode):${Color_Off}"
-read -rp "New admin user: " ADMIN_USER
-sed -i "s/MYADMIN/$ADMIN_USER/g" "$PATH_CONFIG"
-mkdir "$SAVEDIR/$ADMIN_USER"
-useradd -d "$SAVEDIR/$ADMIN_USER" -M -s /usr/sbin/nologin -G "$GROUPNAME","$GROUPNAME_ADMINS" "$ADMIN_USER"
-chown "$ADMIN_USER":"$GROUPNAME" "$SAVEDIR/$ADMIN_USER"
-chmod 2770 "$SAVEDIR/$ADMIN_USER"
-smbpasswd -a "$ADMIN_USER"
-smbpasswd -e "$ADMIN_USER"
 printf "\n"
 
 # enable and start service on boot
